@@ -7,9 +7,10 @@ RewriteEngine On
 RewriteBase /
 
 # Перенаправить все запросы на index.html, за исключением существующих файлов и директорий
+RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.html [QSA,L]
+RewriteRule . /dist/index.html [L]
 
 # Установить заголовки для кэширования статических ресурсов
 <IfModule mod_expires.c>
