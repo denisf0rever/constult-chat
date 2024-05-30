@@ -6,8 +6,8 @@ const chatHeader = (props) => {
     <div className="chat-header__wrapper">
       <img src={avatar} alt="" className="chat-header__user-avatar" />
       <div className="chat-header__user-name">{props.activeChatName}</div>
-      <div class="chat-header__menu-btn" onClick={() => props.setIsMenuHidden(!props.isMenuHidden)}>
-        <svg class="chat-header__menu-btn-svg">
+      <div className="chat-header__menu-btn" onClick={() => props.setIsMenuHidden(!props.isMenuHidden)}>
+        <svg className="chat-header__menu-btn-svg">
           <circle r="2" fill="#000" cx="50%" cy="50%"></circle>
           <circle r="2" fill="#000" cx="50%" cy="25%"></circle>
           <circle r="2" fill="#000" cx="50%" cy="75%"></circle>
