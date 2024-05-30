@@ -37,7 +37,7 @@ function App() {
 
   useEffect(() => {
     // setsocket(io('https://chat-test-server.onrender.com'));
-    setsocket(io('http://okuoku.ru:6001'));
+    setsocket(io('http://server.okuoku.ru:6001'));
 
   }, [])
 
