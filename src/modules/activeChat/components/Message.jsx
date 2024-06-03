@@ -4,7 +4,7 @@ const Message = (props) => {
 
   const formattedTime = props.message.created_at.split(' ')[1].split(':').slice(0, 2).join(':');
 
-  const messageTypeClass = (props.message.role === 0)
+  const messageTypeClass = (props.message.role === 'operator')
     ? 'chat-list__message chat-list__operator'
     : 'chat-list__message chat-list__user';
 
