@@ -20,7 +20,8 @@ function App() {
     if (socket) {
       console.log('chat', chat);
       console.log('запрашиваю сообщения для:', chat.chat_id);
-      socket.emit('getMessages', chat.chat_id);
+      socket.emit('joinChat', chat.chat_id)
+      // socket.emit('getMessages', chat.chat_id);
       socket.on('getMessages', (messages) => {
         console.log('messages', messages);
         setActiveChatMessages(messages);
