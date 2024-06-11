@@ -1,19 +1,41 @@
 import { useEffect, useState } from "react"
 import Chats from "./modules/chats/Chats"
 import ActiveChat from "./modules/activeChat/ActiveChat"
-import io from "socket.io-client";
+import socket from './api/socket'
 
-function App() {
+const App = () => {
 
-  const [socket, setsocket] = useState('');
 
   const [chats, setChats] = useState([]);
-
   const [activeChat, setActiveChat] = useState('');
-
   const [activeChatMessages, setActiveChatMessages] = useState([]);
 
-  //123
+  useEffect(() => {
+
+    socket.emit('getChats');
+
+    socket.on('connect', () => {
+      console.log('Connected to socket server');
+    });
+
+    socket.on('getChats', (chats) => {
+      console.log('chats', chats);
+      setChats(chats);
+    });
+
+    socket.on('getMessages', (messages) => {
+      console.log('messages', messages);
+      setActiveChatMessages(messages);
+    });
+
+
+    return () => {
+      socket.off('getMessages');
+      socket.off('joinChat');
+      socket.off('connect');
+
+    };
+  }, []);
 
   const setNewChat = (chat) => {
     setActiveChat(chat);
@@ -21,11 +43,6 @@ function App() {
       console.log('chat', chat);
       console.log('запрашиваю сообщения для:', chat.chat_id);
       socket.emit('joinChat', chat.chat_id)
-      // socket.emit('getMessages', chat.chat_id);
-      socket.on('getMessages', (messages) => {
-        console.log('messages', messages);
-        setActiveChatMessages(messages);
-      });
     }
   }
 
@@ -39,25 +56,18 @@ function App() {
     }));
   }
 
-  useEffect(() => {
-    // setsocket(io('https://chat-test-server.onrender.com'));
-    setsocket(io('http://server.okuoku.ru:6001'));
-
-  }, [])
-
-  useEffect(() => {
-    console.log(socket);
-    if (socket !== '') {
-      socket.on('connect', () => {
-        console.log('Connected to socket server');
-      });
-      socket.emit('getChats');
-      socket.on('getChats', (chats) => {
-        console.log('chats', chats);
-        setChats(chats);
-      });
-    }
-  }, [socket])
+  // useEffect(() => {
+  //   if (socket !== '') {
+  //     socket.on('connect', () => {
+  //       console.log('Connected to socket server');
+  //     });
+  //     socket.emit('getChats');
+  //     socket.on('getChats', (chats) => {
+  //       console.log('chats', chats);
+  //       setChats(chats);
+  //     });
+  //   }
+  // }, [socket])
 
   return <div className="operator-chat__wrapper">
     <Chats chats={chats} setNewChat={setNewChat} />
