@@ -32,7 +32,6 @@ const App = () => {
       socket.off('getMessages');
       socket.off('joinChat');
       socket.off('connect');
-
     };
   }, []);
 
