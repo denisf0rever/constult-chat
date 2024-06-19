@@ -14,7 +14,8 @@ const ActiveChat = (props) => {
       <ChatHeader activeChatName={props.activeChat.name} isMenuHidden={isMenuHidden} setIsMenuHidden={setIsMenuHidden} />
       <ChatList activeChatMessages={props.activeChatMessages} />
       <ChatBottom sendMessage={props.sendMessage} />
-      <ChatMenu isMenuHidden={isMenuHidden} />
+      <ChatMenu isMenuHidden={isMenuHidden} deleteChat={props.deleteChat} truncateMessages={props.truncateMessages}
+        setIsMenuHidden={setIsMenuHidden} />
     </div>
 
   </div>

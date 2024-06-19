@@ -19,15 +19,14 @@ const App = () => {
     });
 
     socket.on('getChats', (chats) => {
-      console.log('chats', chats);
-      setChats(chats);
+      console.log(Object.values(JSON.parse(chats)));
+      setChats(Object.values(JSON.parse(chats)));
     });
 
     socket.on('getMessages', (messages) => {
       console.log('messages', messages);
       setActiveChatMessages(messages);
     });
-
 
     return () => {
       socket.off('getMessages');
@@ -56,22 +55,26 @@ const App = () => {
     }));
   }
 
-  // useEffect(() => {
-  //   if (socket !== '') {
-  //     socket.on('connect', () => {
-  //       console.log('Connected to socket server');
-  //     });
-  //     socket.emit('getChats');
-  //     socket.on('getChats', (chats) => {
-  //       console.log('chats', chats);
-  //       setChats(chats);
-  //     });
-  //   }
-  // }, [socket])
+  const deleteChat = (toBan) => {
+    setActiveChat('');
+    setActiveChatMessages([]);
+    console.log(toBan);
+    socket.emit('deleteChat', JSON.stringify({
+      chat_id: activeChat.chat_id,
+      to_ban: toBan
+    }))
+  }
+
+  const truncateMessages = () => {
+    console.log('deleteMessages', activeChat.chat_id);
+    socket.emit('deleteMessages', JSON.stringify({
+      chat_id: activeChat.chat_id
+    }))
+  }
 
   return <div className="operator-chat__wrapper">
     <Chats chats={chats} setNewChat={setNewChat} />
-    <ActiveChat activeChatMessages={activeChatMessages} sendMessage={sendMessage} activeChat={activeChat} />
+    <ActiveChat activeChatMessages={activeChatMessages} sendMessage={sendMessage} activeChat={activeChat} deleteChat={deleteChat} truncateMessages={truncateMessages} />
   </div>
 }
 

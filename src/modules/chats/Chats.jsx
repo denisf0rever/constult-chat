@@ -7,7 +7,9 @@ const Chats = (props) => {
   return <div className="operator-chat__chats-wrapper chats-list">
     <Filter />
     <ul className="chats-list__list">
-      {props.chats.map((el, key) => <Chat key={key} chat={el} setNewChat={props.setNewChat} />)}
+      {props.chats.map((el, key) => (
+        <Chat key={key} chat={el[0]} setNewChat={props.setNewChat} />
+      ))}
     </ul>
   </div>
 }
