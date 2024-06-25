@@ -1,19 +1,28 @@
-
+import socket from "../../../api/socket";
 
 const ChatMenu = (props) => {
-
+  console.log('ChatMenu');
   const menuClass = (props.isMenuHidden === true)
     ? 'active-chat-menu__wrapper active-chat-menu__hide'
     : 'active-chat-menu__wrapper';
 
-  const deleteChatFunction = (toBan) => {
+  const deleteChat = (toBan) => {
     props.setIsMenuHidden(true);
-    props.deleteChat(toBan);
+    props.setActiveChat('');
+    props.setActiveChatMessages([]);
+    console.log(toBan);
+    socket.emit('deleteChat', JSON.stringify({
+      chat_id: props.activeChat.chat_id,
+      to_ban: toBan
+    }))
   }
 
-  const truncateMessagesFunction = () => {
+  const truncateMessages = () => {
     props.setIsMenuHidden(true);
-    props.truncateMessages();
+    console.log('deleteMessages', props.activeChat.chat_id);
+    socket.emit('deleteMessages', JSON.stringify({
+      chat_id: props.activeChat.chat_id
+    }))
   }
 
   return <div className="active-chat__menu active-chat-menu">
@@ -21,9 +30,9 @@ const ChatMenu = (props) => {
       <ul className="active-chat-menu__list">
         <li className="active-chat-menu__item">Информация о чате</li>
         <li className="active-chat-menu__item">Отключить уведомления</li>
-        <li className="active-chat-menu__item" onClick={() => truncateMessagesFunction()}>Очистить чат</li>
-        <li className="active-chat-menu__item" onClick={() => deleteChatFunction(false)}>Удалить чат</li>
-        <li className="active-chat-menu__item" onClick={() => deleteChatFunction(true)}>Заблокировать пользователя</li>
+        <li className="active-chat-menu__item" onClick={() => truncateMessages()}>Очистить чат</li>
+        <li className="active-chat-menu__item" onClick={() => deleteChat(false)}>Удалить чат</li>
+        <li className="active-chat-menu__item" onClick={() => deleteChat(true)}>Заблокировать пользователя</li>
       </ul>
     </div>
   </div>

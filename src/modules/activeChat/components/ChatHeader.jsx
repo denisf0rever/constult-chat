@@ -1,6 +1,7 @@
 import avatar from '../../../images/avatar.jpg';
 
 const chatHeader = (props) => {
+  console.log('ChatHeader');
 
   return <div className="active-chat__header chat-header">
     <div className="chat-header__wrapper">

@@ -1,6 +1,7 @@
 import Message from './Message';
 
 const ChatList = (props) => {
+  console.log('ChatList');
   return <div className="active-chat__list chat-list">
     <div className="chat-list__wrapper">
       <ul className="chat-list__list">

@@ -2,14 +2,13 @@ import avatar from '../../../images/avatar.jpg';
 
 
 const Chat = (props) => {
-
+  console.log('Chat');
   let formattedTime = ''
 
   const chooseChat = () => {
     props.setNewChat(props.chat);
   }
 
-  console.log(props.chat);
 
   if (props.chat !== undefined) {
     formattedTime = props.chat.created_at.split(' ')[1].split(':').slice(0, 2).join(':');

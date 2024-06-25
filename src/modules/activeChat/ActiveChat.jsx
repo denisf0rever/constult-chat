@@ -2,13 +2,29 @@ import ChatHeader from "./components/ChatHeader";
 import ChatBottom from "./components/ChatBottom";
 import ChatList from "./components/ChatList";
 import ChatMenu from "./components/ChatMenu";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import socket from "../../api/socket";
 
 const ActiveChat = (props) => {
-
+  console.log('ActiveChat');
   const [isMenuHidden, setIsMenuHidden] = useState(true);
   const [isNowWriting, setIsNowWriting] = useState('');
+  const [activeChatMessages, setActiveChatMessages] = useState([]);
+  const messageRefs = useRef({});
+
+
+  useEffect(() => {
+
+    socket.on('getMessages', (messages) => {
+      console.log('messages', messages);
+      setActiveChatMessages(messages);
+    });
+
+
+    return () => {
+      socket.off('getMessages');
+    };
+  }, []);
 
   useEffect(() => {
 
@@ -42,14 +58,48 @@ const ActiveChat = (props) => {
     }
   }
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if ((entry.target.getAttribute('is-read') == 0) && (entry.target.getAttribute('msg-author') != 1)) {
+              socket.emit('changeMessageStatus', JSON.stringify({
+                chat_id: +entry.target.getAttribute('room-id'),
+                message_id: +entry.target.getAttribute('msg-id')
+              }));
+              console.log('see:', JSON.stringify({
+                chat_id: +entry.target.getAttribute('room-id'),
+                message_id: +entry.target.getAttribute('msg-id')
+              }));
+            }
+            // const messageId = entry.target.getAttribute('data-id');
+            // socket.emit('messageRead', messageId);
+          }
+        });
+      },
+      { threshold: 1.0 }
+    );
+
+    Object.values(messageRefs.current).forEach((ref) => {
+      if (ref) {
+        observer.observe(ref);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [activeChatMessages]);
+
   return <div className="operator-chat__active-chat-wrapper active-chat">
     <div className="active-chat__wrapper">
       <ChatHeader activeChatName={props.activeChat.name} isMenuHidden={isMenuHidden} setIsMenuHidden={setIsMenuHidden} />
-      <ChatList activeChatMessages={props.activeChatMessages} messageRefs={props.messageRefs}
+      <ChatList activeChatMessages={activeChatMessages} messageRefs={messageRefs}
         isNowWriting={isNowWriting} />
-      <ChatBottom sendMessage={props.sendMessage} isWriting={isWriting} />
-      <ChatMenu isMenuHidden={isMenuHidden} deleteChat={props.deleteChat} truncateMessages={props.truncateMessages}
-        setIsMenuHidden={setIsMenuHidden} />
+      <ChatBottom isWriting={isWriting} activeChat={props.activeChat} />
+      <ChatMenu isMenuHidden={isMenuHidden} deleteChat={props.deleteChat} activeChat={props.activeChat}
+        setIsMenuHidden={setIsMenuHidden} setActiveChatMessages={setActiveChatMessages} setActiveChat={props.setActiveChat} />
     </div>
 
   </div>

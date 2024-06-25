@@ -1,9 +1,19 @@
 import { useState, useEffect, useRef } from "react";
-
+import socket from "../../../api/socket";
 
 const chatBottom = (props) => {
-
+  console.log('ChatBottom');
   const [newMessageText, setNewMessageText] = useState('');
+
+  const sendMessage = (messageText) => {
+    socket.emit('sendMessage', JSON.stringify({
+      chat_id: props.activeChat.chat_id,
+      user_id: 1,
+      text: messageText,
+      name: 'Имя оператора',
+      type: 'operator'
+    }));
+  }
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -12,7 +22,7 @@ const chatBottom = (props) => {
       clearTimeout(timeoutRef.current);
       setTimerActive(false);
 
-      props.sendMessage(newMessageText);
+      sendMessage(newMessageText);
       setNewMessageText('')
     }
   };
@@ -29,7 +39,7 @@ const chatBottom = (props) => {
     clearTimeout(timeoutRef.current);
     setTimerActive(false);
 
-    props.sendMessage(newMessageText);
+    sendMessage(newMessageText);
     setNewMessageText('')
   }
 

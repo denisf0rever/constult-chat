@@ -1,7 +1,7 @@
 
 
 const Message = (props) => {
-
+  console.log('Message');
   const formattedTime = props.message.created_at.split(' ')[1].split(':').slice(0, 2).join(':');
 
   const messageTypeClass = (props.message.role === 'operator')
