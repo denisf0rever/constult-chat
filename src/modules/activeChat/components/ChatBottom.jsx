@@ -7,6 +7,11 @@ const chatBottom = (props) => {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
+      console.log('sendMessage');
+      props.isWriting(false);
+      clearTimeout(timeoutRef.current);
+      setTimerActive(false);
+
       props.sendMessage(newMessageText);
       setNewMessageText('')
     }
@@ -19,8 +24,9 @@ const chatBottom = (props) => {
   }
 
   const sendNewMessage = () => {
-    clearTimeout(timeoutRef.current);
+    console.log('sendMessage');
     props.isWriting(false);
+    clearTimeout(timeoutRef.current);
     setTimerActive(false);
 
     props.sendMessage(newMessageText);
@@ -31,6 +37,7 @@ const chatBottom = (props) => {
   const timeoutRef = useRef(null);
 
   const startTimeout = () => {
+    console.log('startTimeout');
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       props.isWriting(false);
