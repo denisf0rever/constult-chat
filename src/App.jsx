@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Chats from "./modules/chats/Chats"
 import ActiveChat from "./modules/activeChat/ActiveChat"
 import socket from './api/socket'
 
 const App = () => {
 
+  const messageRefs = useRef({});
+
 
   const [chats, setChats] = useState([]);
   const [activeChat, setActiveChat] = useState('');
   const [activeChatMessages, setActiveChatMessages] = useState([]);
+  const [isNowWriting, setIsNowWriting] = useState('');
 
   useEffect(() => {
 
@@ -28,12 +31,60 @@ const App = () => {
       setActiveChatMessages(messages);
     });
 
+    socket.on('setWritingStatus', (JSONmsg) => {
+      const msg = JSON.parse(JSONmsg);
+      console.log('msg', msg);
+      if (msg.is_writing) {
+        setIsNowWriting(msg.name);
+      }
+      else if (!msg.is_writing) {
+        setIsNowWriting('');
+      }
+    });
+
     return () => {
       socket.off('getMessages');
       socket.off('joinChat');
+      socket.off('isWriting');
       socket.off('connect');
     };
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            console.log(entry.target.getAttribute('is-read'));
+            console.log(entry.target.getAttribute('msg-author'));
+            if ((entry.target.getAttribute('is-read') == 0) && (entry.target.getAttribute('msg-author') != 1)) {
+              socket.emit('changeMessageStatus', JSON.stringify({
+                chat_id: +entry.target.getAttribute('room-id'),
+                message_id: +entry.target.getAttribute('msg-id')
+              }));
+              console.log('see:', JSON.stringify({
+                chat_id: +entry.target.getAttribute('room-id'),
+                message_id: +entry.target.getAttribute('msg-id')
+              }));
+            }
+            // const messageId = entry.target.getAttribute('data-id');
+            // socket.emit('messageRead', messageId);
+          }
+        });
+      },
+      { threshold: 1.0 }
+    );
+
+    Object.values(messageRefs.current).forEach((ref) => {
+      if (ref) {
+        observer.observe(ref);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [activeChatMessages]);
 
   const setNewChat = (chat) => {
     setActiveChat(chat);
@@ -71,9 +122,23 @@ const App = () => {
     }))
   }
 
+  const isWriting = (isWritingVal) => {
+    socket.emit('setWritingStatus', JSON.stringify({
+      chat_id: activeChat.chat_id,
+      name: 'Оператор',
+      is_writing: isWritingVal
+    }))
+    if (isWritingVal) {
+      console.log('is writin emit true')
+    }
+    else if (!isWritingVal) {
+      console.log('is writin emit false')
+    }
+  }
+
   return <div className="operator-chat__wrapper">
     <Chats chats={chats} setNewChat={setNewChat} />
-    <ActiveChat activeChatMessages={activeChatMessages} sendMessage={sendMessage} activeChat={activeChat} deleteChat={deleteChat} truncateMessages={truncateMessages} />
+    <ActiveChat activeChatMessages={activeChatMessages} sendMessage={sendMessage} activeChat={activeChat} deleteChat={deleteChat} truncateMessages={truncateMessages} messageRefs={messageRefs} isNowWriting={isNowWriting} isWriting={isWriting} />
   </div>
 }
 

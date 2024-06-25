@@ -183,6 +183,7 @@ body{
     background-color: #fff;
     border-top: 2px solid #f1f2f6;
     padding: 20px 10px 20px 50px;
+    position: relative;
   }
   &__list{
     display: flex;
@@ -208,6 +209,11 @@ body{
   &__operator{
     align-self: flex-end;
     background-color: #d9fdd1;
+  }
+  &__now-writing{
+    position: absolute;
+    bottom: 0;
+    left: 50px;
   }
 }
 
