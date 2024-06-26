@@ -8,11 +8,11 @@ const ChatList = (props) => {
 
   const messageRefs = useRef({});
   const messageListScroll = useRef({});
-  const listWrapper = useRef({});
 
 
   useEffect(() => {
-    if (messageListScroll.current.scrollTop > listWrapper.current.offsetHeight - 400) {
+    console.log(messageListScroll.current.scrollTop, '-', messageListScroll.current.scrollHeight - messageListScroll.current.clientHeight);
+    if (messageListScroll.current.scrollTop > messageListScroll.current.scrollHeight - messageListScroll.current.clientHeight - 400) {
       messageListScroll.current.scrollTop = messageListScroll.current.scrollHeight;
     }
   }, [props.activeChatMessages])
@@ -52,7 +52,7 @@ const ChatList = (props) => {
   }, [props.activeChatMessages]);
 
   return <div className="active-chat__list chat-list" ref={messageListScroll}>
-    <div className="chat-list__wrapper" ref={listWrapper}>
+    <div className="chat-list__wrapper" >
       <ul className="chat-list__list">
         {props.activeChatMessages.map((el, key) => <Message key={key} message={el} messageRefs={messageRefs}
         />)}
