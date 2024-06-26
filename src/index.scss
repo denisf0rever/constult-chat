@@ -135,6 +135,7 @@ body{
     display: flex;
     flex-direction: column;
     position: relative;
+    background-color: #fff;
   }
   &__list{
     flex-grow: 1;
@@ -191,7 +192,7 @@ body{
     gap: 10px;
   }
   &__message{
-    padding: 7px 40px 10px 5px;
+    padding: 7px 70px 10px 5px;
     max-width: 500px;
     width: max-content;
     display: flex;
@@ -199,11 +200,12 @@ body{
     position: relative;
     border-radius: 8px;
     box-shadow: 0 1px .5px rgba(11, 20, 26, .13);
+    position: relative;
   }
   &__time{
     position: absolute;
     bottom: 5px;
-    right: 5px;
+    right: 35px;
     font-size: 12px; 
   }
   &__operator{
@@ -214,6 +216,16 @@ body{
     position: absolute;
     bottom: 0;
     left: 50px;
+  }
+  &__is-read{
+    position: absolute;
+    display: flex;
+    right: 5px;
+    bottom: 5px;
+  }
+  &__checkmark{
+    width: 10px;
+    height: 10px;
   }
 }
 

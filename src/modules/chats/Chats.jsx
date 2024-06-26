@@ -21,6 +21,7 @@ const Chats = (props) => {
 
     socket.emit('getChats');
     socket.on('getChats', (chats) => {
+      console.log('chats', chats);
       setChats(Object.values(JSON.parse(chats)));
     });
 

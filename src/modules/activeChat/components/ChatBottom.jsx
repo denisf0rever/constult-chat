@@ -5,6 +5,20 @@ const chatBottom = (props) => {
   console.log('ChatBottom');
   const [newMessageText, setNewMessageText] = useState('');
 
+  const isWriting = (isWritingVal) => {
+    socket.emit('setWritingStatus', JSON.stringify({
+      chat_id: props.activeChat.chat_id,
+      name: 'Оператор',
+      is_writing: isWritingVal
+    }))
+    if (isWritingVal) {
+      console.log('is writin emit true')
+    }
+    else if (!isWritingVal) {
+      console.log('is writin emit false')
+    }
+  }
+
   const sendMessage = (messageText) => {
     socket.emit('sendMessage', JSON.stringify({
       chat_id: props.activeChat.chat_id,
@@ -16,9 +30,8 @@ const chatBottom = (props) => {
   }
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      console.log('sendMessage');
-      props.isWriting(false);
+    if (event.key === 'Enter' && newMessageText.length > 0) {
+      isWriting(false);
       clearTimeout(timeoutRef.current);
       setTimerActive(false);
 
@@ -34,30 +47,30 @@ const chatBottom = (props) => {
   }
 
   const sendNewMessage = () => {
-    console.log('sendMessage');
-    props.isWriting(false);
-    clearTimeout(timeoutRef.current);
-    setTimerActive(false);
+    if (newMessageText.length > 0) {
+      isWriting(false);
+      clearTimeout(timeoutRef.current);
+      setTimerActive(false);
 
-    sendMessage(newMessageText);
-    setNewMessageText('')
+      sendMessage(newMessageText);
+      setNewMessageText('')
+    }
   }
 
   const [timerActive, setTimerActive] = useState(false); // Состояние для активации таймера
   const timeoutRef = useRef(null);
 
   const startTimeout = () => {
-    console.log('startTimeout');
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      props.isWriting(false);
+      isWriting(false);
       setTimerActive(false); // Сброс состояния активации после срабатывания таймера
     }, 1500);
   };
 
   useEffect(() => {
     if (timerActive) {
-      props.isWriting(true);
+      isWriting(true);
     }
   }, [timerActive])
 
